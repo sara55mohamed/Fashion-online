@@ -1,85 +1,69 @@
+        <?php
+        //Authentication ---> to prove you in staff or not(admin or worker)*/
+                    // ob_start();  
+                        require("SQL/connect.php");#new code
+                    //  $authorizedUsers  = "admin.php";
+                    $t =null;
+                            if(isset($_POST['submit'])){
+                                $e = $_POST['email'];
+                                $p = $_POST['password'];
+                            //    $Role = $_POST['role'];
+                    $getStaff = "SELECT * FROM users WHERE email='".$e."' AND password= '".$p."'";
+                    
+                        $getStaffDetails = $connect->prepare($getStaff);
+                        $getStaffDetails -> execute();
+                        
+                                if ($row = $getStaffDetails->fetch(PDO::FETCH_ASSOC)) {
+                                    //header("Location: ". $authorizedUsers);
+                                    session_start();
+                                    $_SESSION['email'] = $e;
+                                    $_SESSION['password'] = $p;
+                                    $_SESSION['type'] = $row['type'];
 
-<html>
-<head>
-    <title>Shop</title>
-   
-    <link rel="stylesheet" href="css/main.css" >
-    <script>
-            function check(){
-                e=document.getElementById('e').value;
-                // e=document.getElementById('e').value;
-                p=document.getElementById('p').value;
-                
-                y= /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; 
-                z= /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
- /* for password/^
-  (?=.*\d)          // should contain at least one digit
-  (?=.*[a-z])       // should contain at least one lower case
-  (?=.*[A-Z])       // should contain at least one upper case
-  [a-zA-Z0-9]{8,}   // should contain at least 8 from the mentioned characters
-$/
-*/
-          if(y.test(e)==true) {
-                   document.getElementById('c').innerHTML="<div style='color:white ;'>failed email</div>";
-                }
-          if(z.test(p)==true) {
-                    document.getElementById('d').innerHTML="<div style='color:white ;'>password should contain atleast one number and one special character</div>";
-                }
-            }
-        </script>
+                                if($_SESSION['type'] == 'admin'){
+                                    header("Location:users.php");
+                                }elseif ($_SESSION['type'] == 'worker'){
+                                header("Location:product.php");
+                                }
+                            }
+                            else{
+                                echo"<script>alert('Invalid Staff')</script>";
+                            }
+                        }
+        ?> 
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <title>Shop</title>
+            <link rel="icon" href="img/favicon.png" sizes="192x192" /> 
+            <link rel="stylesheet" type="text/css" href="css/main.css">
 
-</head>
-<body>
-    <?php
-                
-    require_once("SQL/connect.php");#new code
-    
-        if(isset($_POST['submit'])){
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            
-       $getUser=mysql_query("SELECT * FROM users WHERE email='".$email."' 
-       AND password= '".$password."'",$connect);#new code
-            
-        
-            if ($row=mysql_fetch_array($getUser)) {
-                
-                header("Location: users.php");
-            }
-            else{
-                echo"<script>alert('Invalid user')</script>";
-            }
-           
-        }
-
-    
-
-
-        ?>
-
+        </head>
+        <body>
         <div class="box">
-        
-        <h2>Login</h2>
-        
-        <form method="post">
             
-            <div class="inputBox">
-             <input type="email" name="email" required="" id="e" >
-                <div id="c"></div>
-             <label>Email</label>
-            </div>
-            <div class="inputBox" >
-                <input type="password" name="password" required="" id="p" >
-                <div id="d"></div>
-                <label>Password</label>
+            <h2>Login</h2>
+            
+            <form method="post">
                 
-            </div>
-            <a href="users.php">
-            <input type="submit" name="submit" value="Submit" onclick="check();">
-            </a>
-        </form>
-    </div>
-
-        <div class="clear"></div>                  
-   </body>
-</html>
+                <div class="inputBox">
+                <input type="email" name="email" required="" id="e" >
+                    <div id="c"></div>
+                <label>Email</label>
+                </div>
+                <div class="inputBox" >
+                    <input type="password" name="password" required="" id="p" >
+                    <div id="d"></div>
+                    <label>Password</label>
+                    
+                </div>
+                <a>
+                <button type="submit" name="submit" value="Submit">Sign in </button>
+                </a>
+            </form>
+        </div>
+        
+        </body>
+        
+        
+        </html>
